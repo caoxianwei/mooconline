@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
 ]
+# UserProfile 覆盖了 django 内置的 user 表
 AUTH_USER_MODEL = 'users.UserProfile'
 
 MIDDLEWARE = [
@@ -56,8 +57,7 @@ ROOT_URLCONF = 'mooconline.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
