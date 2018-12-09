@@ -34,12 +34,15 @@ class EmailVerifyRecord(models.Model):
     )
     code = models.CharField('验证码', max_length=20)
     email = models.EmailField('邮箱', max_length=50)
-    send_choices = models.CharField(choices=send_choices, max_length=30)
-    send_time = models.DateField(default=datetime.now)
+    send_choices = models.CharField('验证码类型', choices=send_choices, max_length=30)
+    send_time = models.DateField('发送时间', default=datetime.now)
 
     class Meta:
-        verbose_name = '邮箱验证码'
+        verbose_name = '邮箱验证码ss'
         verbose_name_plural = verbose_name
+
+    # def __str__(self):
+    #     return '{0}({1})'.format(self.code, self.email)
 
 
 class Banner(models.Model):

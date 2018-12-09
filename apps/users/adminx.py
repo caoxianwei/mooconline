@@ -1,0 +1,24 @@
+# Author:Sunday
+
+import xadmin
+
+from .models import EmailVerifyRecord, Banner
+
+
+class EmailVerifyRecordAdmin(object):
+    # 显示的列
+    list_display = ['code', 'email', 'send_choices', 'send_time']
+    # 搜索的字段
+    search_fields = ['code', 'email', 'send_choices']
+    # 过滤
+    list_filter = ['code', 'email', 'send_choices', 'send_time']
+
+
+class BannerAdmin(object):
+    list_display = ['title', 'image', 'url', 'index', 'add_time']
+    search_fields = ['title', 'image', 'url', 'index']
+    list_filter = ['title', 'image', 'url', 'index', 'add_time']
+
+
+xadmin.site.register(EmailVerifyRecord, EmailVerifyRecordAdmin)
+xadmin.site.register(Banner, BannerAdmin)
