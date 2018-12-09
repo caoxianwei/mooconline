@@ -50,7 +50,7 @@ class Video(models.Model):
 
 
 class CourseResource(models.Model):
-    course = models.ForeignKey(Course, verbose_name='课程')
+    course = models.ForeignKey(Course, verbose_name='课程', on_delete=models.CASCADE)
     name = models.CharField('视频名', max_length=100)
     download = models.FileField('资源文件', upload_to='course/resource/%Y/%m', max_length=100)
     add_time = models.DateTimeField('添加时间', default=datetime.now)
