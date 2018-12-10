@@ -39,6 +39,9 @@ class Lesson(models.Model):
         verbose_name = "章节"
         verbose_name_plural = verbose_name
 
+    def __str__(self):
+        return self.name
+
 
 # '''章节视频'''
 class Video(models.Model):

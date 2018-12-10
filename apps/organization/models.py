@@ -11,8 +11,11 @@ class CityDict(models.Model):
     add_time = models.DateTimeField(default=datetime.now)
 
     class Meta:
-        verbose_name = '城市',
+        verbose_name = '城市'
         verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
 
 
 class CourseOrg(models.Model):
@@ -27,7 +30,7 @@ class CourseOrg(models.Model):
     add_time =models.DateTimeField(default=datetime.now)
 
     class Meta:
-        verbose_name = '课程机构',
+        verbose_name = '课程机构'
         verbose_name_plural = verbose_name
 
 
@@ -44,6 +47,5 @@ class Teacher(models.Model):
     add_time = models.DateTimeField('添加时间',default=datetime.now)
 
     class Meta:
-        verbose_name = '教师',
+        verbose_name = '教师'
         verbose_name_plural = verbose_name
-
