@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from django.views.generic.base import View
-from .forms import LoginForm
+from .forms import LoginForm, RegisterForm
 
 from .models import UserProfile
 
@@ -41,6 +41,7 @@ class LoginView(View):
             return render(request, 'login.html', {'login_form': login_form})
 
 
+
 # 舍弃这个登录方法
 def user_login(request):
     if request.method == 'POST':
@@ -54,3 +55,11 @@ def user_login(request):
             return render(request, 'login.html', {'msg': '用户名和密码错误'})
     elif request.method == 'GET':
         return render(request, 'login.html')
+
+
+
+# 注册
+class RegisterView(View):
+    def get(self, request):
+        register_form = RegisterForm()
+        return render(request, 'register.html', {'register_form': register_form})
