@@ -121,6 +121,16 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# 发送邮箱
+
+EMAIL_HOST = "smtp.qq.com"
+EMAIL_PORT = 25
+EMAIL_HOST_USER = "super2146@qq.com"
+EMAIL_HOST_PASSWORD = "dwjybikeqdawhhbc"
+EMAIL_USE_TLS= True
+EMAIL_FROM = "super2146@qq.com"
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
