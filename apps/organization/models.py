@@ -33,17 +33,25 @@ class CourseOrg(models.Model):
     image = models.ImageField('logo', upload_to='org/%Y/%m', max_length=100)
     address = models.CharField('机构地址', max_length=150)
     city = models.ForeignKey(CityDict, verbose_name='所在城市', on_delete=models.CASCADE)
-    add_time =models.DateTimeField(default=datetime.now)
+    add_time = models.DateTimeField(default=datetime.now)
 
     class Meta:
         verbose_name = '课程机构'
         verbose_name_plural = verbose_name
+
+    def get_teacher_nums(self):
+        # 获取机构的教师数
+        return self.teacher_set.all().count()
+
+    def course_nums(self):
+        return self.course_set.all().count()
 
     def __str__(self):
         return self.name
 
 
 class Teacher(models.Model):
+    org = models.ForeignKey(CourseOrg, verbose_name='所属机构', on_delete=models.CASCADE)
     name = models.CharField('教师名', max_length=100)
     work_years = models.IntegerField('工作年限', default=0)
     work_company = models.CharField('就职公司', max_length=100)
@@ -52,12 +60,15 @@ class Teacher(models.Model):
     click_nums = models.IntegerField('点击数', default=0)
     fav_nums = models.IntegerField('收藏数', default=0)
     teacher_age = models.IntegerField('年龄', default=25)
-    image = models.ImageField('头像', upload_to='teacher/%Y/%m', max_length=100, default='')
-    add_time = models.DateTimeField('添加时间',default=datetime.now)
+    image = models.ImageField('头像', upload_to='teacher/%Y/%m', max_length=100, default='teacher.png')
+    add_time = models.DateTimeField('添加时间', default=datetime.now)
 
     class Meta:
         verbose_name = '教师'
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.name
+        return "[{0}]的教师: {1}".format(self.org, self.name)
+
+    def get_course_nums(self):
+        return self.course_set.all().count()

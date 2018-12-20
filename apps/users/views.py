@@ -148,3 +148,9 @@ class ModifyPwdView(View):
             user.save()
             return  render(request, 'login.html')
         return render(request, 'password_reset.html', {'email': email, 'modify_form': modify_form})
+
+
+
+class UserinfoView(View):
+    def get(self, request):
+        return render(request, 'usercenter-info.html', {})
