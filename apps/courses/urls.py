@@ -1,7 +1,11 @@
 # Author:Sunday
 
-from django.conf.urls import url
+from django.urls import path
 
-app_name = 'courses'
+from .views import CourseListView
+
+app_name = 'course'
+
 urlpatterns = [
+    path('list/', CourseListView.as_view(), name='course_list')
 ]
