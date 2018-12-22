@@ -24,14 +24,32 @@ class Course(models.Model):
     students = models.IntegerField('学习人数', default=0)
     image = models.ImageField(upload_to='courses/%Y/%m', max_length=100)
     click_nums = models.IntegerField("点击数", default=0)
+    tag = models.CharField('课程标签',default='',max_length=10)
+    category = models.CharField("课程类别", max_length=20, default=''),
     tag = models.CharField('课程标签', default='', max_length=10)
 
     class Meta:
         verbose_name = '课程'
         verbose_name_plural = verbose_name
 
+    def get_zj_nums(self):
+        # 获取课程的章节数
+        return self.lesson_set.all().count()
+
+
+    def get_course_lesson(self):
+        #获取课程所有章节
+        return self.lesson_set.all()
+
+    def get_learn_users(self):
+        #获取这门课程的学习用户
+        return self.usercourse_set.all()[:5]
+
+    get_zj_nums.short_description = '章节数'  # 在后台显示的名称
+
     def __str__(self):
         return self.name
+
 
 class Lesson(models.Model):
     course = models.ForeignKey(Course, verbose_name='课程', on_delete=models.CASCADE)

@@ -18,9 +18,9 @@ class CourseOrgAdmin(object):
 
 
 class TeacherAdmin(object):
-    list_display = ['name']
-    # search_fields = ['org', 'name', 'work_years', 'work_company']
-    # list_filter = ['org__name', 'name', 'work_years', 'work_company', 'click_nums', 'fav_nums', 'add_time']
+    list_display = ['org', 'name', 'work_years', 'work_company']
+    search_fields = ['org', 'name', 'work_years', 'work_company']
+    list_filter = ['org__name', 'name', 'work_years', 'work_company', 'click_nums', 'fav_nums', 'add_time']
 
 
 xadmin.site.register(CityDict, CityDictAdmin)
