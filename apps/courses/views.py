@@ -3,7 +3,8 @@ from django.views.generic import View
 from django.http import HttpResponse
 
 from .models import Course, CourseResource, Video
-from operation.models import UserFavorite, CourseComments
+from operation.models import UserFavorite, CourseComments, UserCourse
+from utils.mixin_utils import LoginRequiredMixin
 
 from pure_pagination import Paginator, PageNotAnInteger
 
@@ -73,17 +74,24 @@ class CourseDetailView(View):
         })
 
 
-class CourseInfoView(View):
+class CourseInfoView(LoginRequiredMixin, View):
     def get(self,request,course_id):
         course = Course.objects.get(id=int(course_id))
         course.students += 1
         course.save()
+
+        user_courses = UserCourse.objects.filter(user=request.user,course=course)
+        user_ids = [user_course.user.id for user_course in user_courses]
+        all_user_courses = UserCourse.objects.filter(user_id__in=user_ids)
+        course_ids = [user_courser.course.id for user_courser in all_user_courses]
+        relate_course = Course.objects.filter(id__in=course_ids).order_by('-click_nums')[:5]
 
         # 资源
         all_resources = CourseResource.objects.filter(course=course)
         return render(request, 'course-video.html', {
             'course': course,
             'all_resources': all_resources,
+            'relate_course': relate_course,
         })
 
 
