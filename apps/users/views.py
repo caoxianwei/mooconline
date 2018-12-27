@@ -14,6 +14,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 
 from .models import UserProfile
+from operation.models import UserCourse, UserFavorite
+from organization.models import CourseOrg,Teacher
 
 
 # Create your views here.
@@ -86,10 +88,10 @@ class ActiveUserView(View):
         return render(request, "login.html", )
 
 
-
 class LogoutView(View):
     '''用户登出'''
-    def get(self,request):
+
+    def get(self, request):
         logout(request)
         return HttpResponseRedirect(reverse('index'))
 
@@ -146,9 +148,9 @@ class ResetView(View):
         return render(request, "login.html", )
 
 
-
 class ModifyPwdView(View):
     '''修改用户密码'''
+
     def get(self, request):
         modify_form = ModifyPwdForm()
         email = request.POST.get('email', '')
@@ -160,14 +162,14 @@ class ModifyPwdView(View):
             user = UserProfile.objects.get(email=email)
             user.password = make_password(pwd1)
             user.save()
-            return  render(request, 'login.html')
+            return render(request, 'login.html')
         return render(request, 'password_reset.html', {'email': email, 'modify_form': modify_form})
-
 
 
 class UserinfoView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'usercenter-info.html', {})
+
     def post(self, request):
         user_info_form = UserInfoForm(request.POST, instance=request.user)
         if user_info_form.is_valid():
@@ -193,13 +195,14 @@ class UpdatePwdView(View):
     """
     个人中心修改用户密码
     """
+
     def post(self, request):
         modify_form = ModifyPwdForm(request.POST)
         if modify_form.is_valid():
             pwd1 = request.POST.get("password1", "")
             pwd2 = request.POST.get("password2", "")
             if pwd1 != pwd2:
-                return HttpResponse('{"status":"fail","msg":"密码不一致"}',  content_type='application/json')
+                return HttpResponse('{"status":"fail","msg":"密码不一致"}', content_type='application/json')
             user = request.user
             user.password = make_password(pwd2)
             user.save()
@@ -215,13 +218,12 @@ class SendEmailCodeView(LoginRequiredMixin, View):
         if UserProfile.objects.filter(email=email):
             return HttpResponse('{"email":"邮箱已存在"}', content_type='application/json')
 
-        send_register_eamil(email,'update_email')
+        send_register_eamil(email, 'update_email')
         return HttpResponse('{"status":"success"}', content_type='application/json')
 
 
-
 class UpdateEmailView(LoginRequiredMixin, View):
-    def post(self,request):
+    def post(self, request):
         email = request.POST.get('email', '')
         code = request.POST.get("code", "")
 
@@ -233,3 +235,48 @@ class UpdateEmailView(LoginRequiredMixin, View):
             return HttpResponse('{"status":"success"}', content_type='application/json')
         else:
             return HttpResponse('{"email":"验证码无效"}', content_type='application/json')
+
+
+class MyCourseView(LoginRequiredMixin, View):
+    '''我的课程'''
+
+    def get(self, request):
+        user_courses = UserCourse.objects.filter(user=request.user)
+        return render(request, "usercenter-mycourse.html", {
+            "user_courses": user_courses,
+        })
+
+
+
+class MyFavOrgView(LoginRequiredMixin,View):
+    '''我收藏的课程机构'''
+
+    def get(self, request):
+        org_list = []
+        fav_orgs = UserFavorite.objects.filter(user=request.user, fav_type=2)
+        # 上面的fav_orgs只是存放了id。我们还需要通过id找到机构对象
+        for fav_org in fav_orgs:
+            # 取出fav_id也就是机构的id。
+            org_id = fav_org.fav_id
+            # 获取这个机构对象
+            org = CourseOrg.objects.get(id=org_id)
+            org_list.append(org)
+        return render(request, "usercenter-fav-org.html", {
+            "org_list": org_list,
+        })
+
+
+
+class MyFavTeacherView(LoginRequiredMixin, View):
+    '''我收藏的授课讲师'''
+
+    def get(self, request):
+        teacher_list = []
+        fav_teachers = UserFavorite.objects.filter(user=request.user, fav_type=3)
+        for fav_teacher in fav_teachers:
+            teacher_id = fav_teacher.fav_id
+            teacher = Teacher.objects.get(id=teacher_id)
+            teacher_list.append(teacher)
+        return render(request, "usercenter-fav-teacher.html", {
+            "teacher_list": teacher_list,
+        })
