@@ -14,10 +14,12 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 
 from .models import UserProfile
-from operation.models import UserCourse, UserFavorite
+from operation.models import UserCourse, UserFavorite, UserMessage
 from organization.models import CourseOrg,Teacher
+from courses.models import Course
 
 
+from pure_pagination import Paginator, PageNotAnInteger
 # Create your views here.
 
 
@@ -279,4 +281,38 @@ class MyFavTeacherView(LoginRequiredMixin, View):
             teacher_list.append(teacher)
         return render(request, "usercenter-fav-teacher.html", {
             "teacher_list": teacher_list,
+        })
+
+
+class MyFavCourseView(LoginRequiredMixin,View):
+    """
+    我收藏的课程
+    """
+    def get(self, request):
+        course_list = []
+        fav_courses = UserFavorite.objects.filter(user=request.user, fav_type=1)
+        for fav_course in fav_courses:
+            course_id = fav_course.fav_id
+            course = Course.objects.get(id=course_id)
+            course_list.append(course)
+
+        return render(request, 'usercenter-fav-course.html', {
+            "course_list":course_list,
+        })
+
+
+class MyMessageView(LoginRequiredMixin, View):
+    '''我的消息'''
+
+    def get(self, request):
+        all_message = UserMessage.objects.filter(user= request.user.id)
+
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+        p = Paginator(all_message, 4,request=request)
+        messages = p.page(page)
+        return  render(request, "usercenter-message.html", {
+        "messages":messages,
         })
