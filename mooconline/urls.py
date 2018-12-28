@@ -15,18 +15,18 @@ Including another URLconf
 """
 # from django.contrib import admin
 from django.urls import path, include, re_path
-from django.views.generic import TemplateView
+# from django.views.generic import TemplateView
 from django.views.static import serve
 from mooconline.settings import MEDIA_ROOT
 
 from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ModifyPwdView
-from users.views import LogoutView
+from users.views import LogoutView, IndexView
 
 import xadmin
 
 urlpatterns = [
     path('xadmin/', xadmin.site.urls),
-    path('', TemplateView.as_view(template_name='index.html'), name='index'),
+    path('', IndexView.as_view(), name='index'),
     # path('login/', TemplateView.as_view(template_name='login.html'), name='login'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name="logout"),
@@ -49,4 +49,7 @@ urlpatterns = [
     re_path(r'^media/(?P<path>.*)', serve, {"document_root": MEDIA_ROOT }),
 ]
 
-
+# 全局404页面配置
+handler404 = 'users.views.pag_not_found'
+# 全局500页面配置
+handler500 = 'users.views.page_error'
