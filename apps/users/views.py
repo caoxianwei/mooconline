@@ -15,11 +15,12 @@ from django.urls import reverse
 
 from .models import UserProfile
 from operation.models import UserCourse, UserFavorite, UserMessage
-from organization.models import CourseOrg,Teacher
+from organization.models import CourseOrg, Teacher
 from courses.models import Course
 
-
 from pure_pagination import Paginator, PageNotAnInteger
+
+
 # Create your views here.
 
 
@@ -117,6 +118,12 @@ class RegisterView(View):
             user_profile.is_active = False
             user_profile.password = make_password(pass_word)
             user_profile.save()
+
+            user_message = UserMessage()
+            user_message.user = user_profile.id
+            user_message.message = '欢迎注册墓穴王'
+            user_message.save()
+
             send_register_eamil(user_name, 'register')
             return render(request, 'login.html')
         else:
@@ -249,8 +256,7 @@ class MyCourseView(LoginRequiredMixin, View):
         })
 
 
-
-class MyFavOrgView(LoginRequiredMixin,View):
+class MyFavOrgView(LoginRequiredMixin, View):
     '''我收藏的课程机构'''
 
     def get(self, request):
@@ -268,7 +274,6 @@ class MyFavOrgView(LoginRequiredMixin,View):
         })
 
 
-
 class MyFavTeacherView(LoginRequiredMixin, View):
     '''我收藏的授课讲师'''
 
@@ -284,10 +289,11 @@ class MyFavTeacherView(LoginRequiredMixin, View):
         })
 
 
-class MyFavCourseView(LoginRequiredMixin,View):
+class MyFavCourseView(LoginRequiredMixin, View):
     """
     我收藏的课程
     """
+
     def get(self, request):
         course_list = []
         fav_courses = UserFavorite.objects.filter(user=request.user, fav_type=1)
@@ -297,7 +303,7 @@ class MyFavCourseView(LoginRequiredMixin,View):
             course_list.append(course)
 
         return render(request, 'usercenter-fav-course.html', {
-            "course_list":course_list,
+            "course_list": course_list,
         })
 
 
@@ -305,14 +311,14 @@ class MyMessageView(LoginRequiredMixin, View):
     '''我的消息'''
 
     def get(self, request):
-        all_message = UserMessage.objects.filter(user= request.user.id)
+        all_message = UserMessage.objects.filter(user=request.user.id)
 
         try:
             page = request.GET.get('page', 1)
         except PageNotAnInteger:
             page = 1
-        p = Paginator(all_message, 4,request=request)
+        p = Paginator(all_message, 4, request=request)
         messages = p.page(page)
-        return  render(request, "usercenter-message.html", {
-        "messages":messages,
+        return render(request, "usercenter-message.html", {
+            "messages": messages,
         })
