@@ -345,6 +345,21 @@ class IndexView(View):
         })
 
 
+# class LoginUnsafeView(View):
+#     def get(self, request):
+#         register_form = RegisterForm()
+#         return render(request, 'register.html', {'register_form': register_form})
+#
+#     def post(self, request):
+#         user_name = request.POST.get('username','')
+#         pass_word = request.POST.get('password', '')
+#
+#         import MySQLdb
+#         cnnn = MySQLdb.connect(host='127.0.0.1', user='root', passwd='', name='mxonline')
+#         cursor = cnnn.cursor()
+#         sql_se
+
+
 from django.shortcuts import render_to_response
 def pag_not_found(request):
     # 全局404处理函数

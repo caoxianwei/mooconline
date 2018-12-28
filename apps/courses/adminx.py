@@ -4,12 +4,30 @@ import xadmin
 
 from .models import Course, Lesson, Video, CourseResource
 
+# 添加课程的时候可以顺便添加章节
+class LessonInline:
+    model = Lesson
+    extra = 0
+
+
+# 添加课程的时候可以顺便添加课程资源
+class CourseResourceInline:
+    model = CourseResource
+    extra = 0
+
 
 class CourseAdmin(object):
     list_display = ['name', 'desc', 'detail', 'degree', 'learn_times', 'students']  # 显示的字段
     search_fields = ['name', 'desc', 'detail', 'degree', 'students']  # 搜索
     list_filter = ['name', 'desc', 'detail', 'degree', 'learn_times', 'students']
+    ordering = ['-click_nums']
 
+    # readonly_fields 和 exclude 的字段不要重复，否则会冲突
+    readonly_fields = ['click_nums']
+    exclude = ['fav_nums']
+
+    #Inline # 添加课程的时候可以顺便添加章节、课程资源
+    inlines = [LessonInline, CourseResourceInline]
 
 class LessonAdmin(object):
     list_display = ['course', 'name', 'add_time']
