@@ -14,10 +14,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 # from django.contrib import admin
+from django.conf import settings
 from django.urls import path, include, re_path
 # from django.views.generic import TemplateView
 from django.views.static import serve
-from mooconline.settings import MEDIA_ROOT
+from mooconline.settings import MEDIA_ROOT, STATICFILES_DIRS
 
 from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ModifyPwdView
 from users.views import LogoutView, IndexView
@@ -47,9 +48,21 @@ urlpatterns = [
 
     # 处理图片显示的url,使用Django自带serve,传入参数告诉它去哪个路径找，我们有配置好的路径MEDIAROOT
     re_path(r'^media/(?P<path>.*)', serve, {"document_root": MEDIA_ROOT }),
+    # re_path(r'^static/(?P<path>.*)', serve, {"document_root": STATICFILES_DIRS }),
 ]
 
 # 全局404页面配置
 handler404 = 'users.views.pag_not_found'
 # 全局500页面配置
 handler500 = 'users.views.page_error'
+
+
+if settings.DEBUG:
+    # debug_toolbar 插件配置
+    import debug_toolbar
+    urlpatterns.append(path('__debug__/', include(debug_toolbar.urls)))
+else:
+    # 项目部署上线时使用
+    from mooconline.settings import STATICFILES_DIRS
+    # 配置静态文件访问处理
+    urlpatterns.append(re_path('static/(?P<path>.*)$', serve, {'document_root': STATICFILES_DIRS}))
